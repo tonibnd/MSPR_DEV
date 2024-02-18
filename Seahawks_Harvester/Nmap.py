@@ -37,11 +37,12 @@ def print_scan_results(results):
 
 def nmapscan(target, total_targets, scanned_count):
     nm = nmap.PortScanner()
-    nm.scan(target, arguments='-A -T4')
+    nm.scan(target, arguments='-sL')
 
     results = []
 
     for host in nm.all_hosts():
+        print(nm[host])
         if nm[host].state() == 'up':
             host_info = {
                 'host': host,
@@ -65,7 +66,7 @@ def nmapscan(target, total_targets, scanned_count):
     scanned_count[0] += 1
     # Calculer le pourcentage d'avancement
     progress_percentage = (scanned_count[0] / total_targets) * 100
-    print(f"Scanning progress: {progress_percentage:.2f}%")
+    print(f"Scanning progress: {progress_percentage:.2f}%", end='\r')  # Utilisation de \r pour écraser la ligne précédente
 
     return results
 
@@ -88,6 +89,11 @@ def scan_targets(target_list):
     return all_results
 
 if __name__ == "__main__":
+
+    print("Quel type de scan voulez-vous effectuer?")
+    print("1. Scan de l'ensemble du réseau local")
+
+
     start_time = time.time()
 
     local_ip_range = get_local_ip_range()
@@ -96,11 +102,13 @@ if __name__ == "__main__":
     
     if responding_ips:
         print("Responding IP addresses found. \nScanning with Nmap...")
+        print("Scanning progress: 0.00%", end="\r")
     else:
         print("No responding IP addresses found.")
         exit()
     all_results = scan_targets(responding_ips)
 
+    print()
     print_scan_results(all_results)
 
     end_time = time.time()
