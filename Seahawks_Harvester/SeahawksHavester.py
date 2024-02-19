@@ -3,6 +3,18 @@ import concurrent.futures
 import time
 import socket
 from scapy.all import ARP, Ether, srp
+import requests
+
+def send_data_to_server(url, data):
+    try:
+        response = requests.post(url, json=data)
+        if response.status_code == 200:
+            print("Data successfully sent to server.")
+        else:
+            print(f"Failed to send data to server. Status code: {response.status_code}")
+    except Exception as e:
+        print(f"Error sending data to server: {e}")
+
 
 def get_local_ip_range():
     # Obtenir l'adresse IP de l'hôte local
@@ -34,15 +46,15 @@ def print_scan_results(results):
                 print(f"- Port: {port_info['port']}, Service: {port_info['service']}")
         else:
             print("No open ports found.")
+    
 
 def nmapscan(target, total_targets, scanned_count):
     nm = nmap.PortScanner()
-    nm.scan(target, arguments='-sN')
+    nm.scan(target, arguments='-A -T4')
 
     results = []
 
     for host in nm.all_hosts():
-        print(nm[host])
         if nm[host].state() == 'up':
             host_info = {
                 'host': host,
@@ -67,6 +79,8 @@ def nmapscan(target, total_targets, scanned_count):
     # Calculer le pourcentage d'avancement
     progress_percentage = (scanned_count[0] / total_targets) * 100
     print(f"Scanning progress: {progress_percentage:.2f}%", end='\r')  # Utilisation de \r pour écraser la ligne précédente
+
+    send_data_to_server("http://192.168.206.143:5000/api/data", results)
 
     return results
 

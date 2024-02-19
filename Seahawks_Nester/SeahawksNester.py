@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 donnees_scannees = []
 
-@app.route('/api/reception', methods=['POST'])
+@app.route('/api/data', methods=['POST'])
 def reception():
     data = request.json
     donnees_scannees.append(data)
