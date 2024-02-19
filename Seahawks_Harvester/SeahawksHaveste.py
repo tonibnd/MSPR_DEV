@@ -37,7 +37,7 @@ def print_scan_results(results):
 
 def nmapscan(target, total_targets, scanned_count):
     nm = nmap.PortScanner()
-    nm.scan(target, arguments='-sL')
+    nm.scan(target, arguments='-sN')
 
     results = []
 
@@ -89,11 +89,6 @@ def scan_targets(target_list):
     return all_results
 
 if __name__ == "__main__":
-
-    print("Quel type de scan voulez-vous effectuer?")
-    print("1. Scan de l'ensemble du réseau local")
-
-
     start_time = time.time()
 
     local_ip_range = get_local_ip_range()
