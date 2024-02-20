@@ -40,9 +40,9 @@ def ping_sweep(ip_range):
     return [received_packet[1].psrc for received_packet in answered]
 
 # Fonction pour scanner avec Nmap
-def nmapscan(target, total_targets, scanned_count, results_container, progress_var, root):
+def nmapscan(target, total_targets, scanned_count, results_container, progress_var, percentage_label, root):
     nm = nmap.PortScanner()
-    nm.scan(target, arguments='-sN')
+    nm.scan(target, arguments='-A')
 
     results = []
 
@@ -50,10 +50,15 @@ def nmapscan(target, total_targets, scanned_count, results_container, progress_v
         if nm[host].state() == 'up':
             host_info = {
                 'host': host,
-                'hostname': nm[host].hostname(),
+                'hostname': '',
                 'state': nm[host].state(),
                 'open_ports': []
             }
+            try:
+                # Utilisation de la résolution de nom inverse du module socket
+                host_info['hostname'] = socket.gethostbyaddr(host)[0]
+            except socket.herror:
+                host_info['hostname'] = "N/A"
 
             for proto in nm[host].all_protocols():
                 if proto == 'tcp':
@@ -69,6 +74,7 @@ def nmapscan(target, total_targets, scanned_count, results_container, progress_v
     scanned_count[0] += 1
     progress_percentage = (scanned_count[0] / total_targets) * 100
     progress_var.set(progress_percentage)
+    percentage_label.config(text=f"{int(progress_percentage)}%")
     root.update_idletasks()  # Mettre à jour l'interface utilisateur avec le pourcentage de progression
 
     send_data_to_server("http://192.168.206.143:5000/api/data", results)
@@ -76,7 +82,7 @@ def nmapscan(target, total_targets, scanned_count, results_container, progress_v
     results_container.extend(results)
 
 # Fonction principale pour démarrer le scan
-def start_scan(progress_var, text_widget, root):
+def start_scan(progress_var, percentage_label, text_widget, root):
     text_widget.configure(state='normal')
     text_widget.delete(1.0, tk.END)
     text_widget.configure(state='disabled')
@@ -91,7 +97,7 @@ def start_scan(progress_var, text_widget, root):
     if responding_ips:
         total_targets = len(responding_ips)
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-            futures = [executor.submit(nmapscan, ip, total_targets, scanned_count, all_results, progress_var, root) for ip in responding_ips]
+            futures = [executor.submit(nmapscan, ip, total_targets, scanned_count, all_results, progress_var, percentage_label, root) for ip in responding_ips]
             for future in concurrent.futures.as_completed(futures):
                 try:
                     future.result()
@@ -159,13 +165,18 @@ def create_gui():
     # Scan button with an icon
     scan_icon = tk.PhotoImage(file="Seahawks_Harvester\scan_icon.png") 
     scan_icon = scan_icon.subsample(5, 5)
-    scan_btn = ttk.Button(main_frame, text="Start Scan", image=scan_icon, compound=tk.LEFT, command=lambda: threading.Thread(target=start_scan, args=(progress_var, result_text, root)).start())
+    scan_btn = ttk.Button(main_frame, text="Start Scan", image=scan_icon, compound=tk.LEFT, command=lambda: threading.Thread(target=start_scan, args=(progress_var, percentage_label, result_text, root)).start())
     scan_btn.pack(pady="10")
 
     # Progress bar
     progress_var = tk.DoubleVar()
-    progress_bar = ttk.Progressbar(main_frame, variable=progress_var, maximum=100, length=250)
+    #progress_bar color green
+    progress_bar = ttk.Progressbar(main_frame, variable=progress_var, maximum=100, length=250, style='green.Horizontal.TProgressbar')
     progress_bar.pack(pady="10")
+
+    # Percentage label
+    percentage_label = ttk.Label(main_frame, text="0%")
+    percentage_label.pack()
 
     # Results area
     result_text = scrolledtext.ScrolledText(main_frame, width=70, height=30, state='disabled', font=("Courier", 10))
