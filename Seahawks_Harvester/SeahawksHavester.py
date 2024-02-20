@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk, scrolledtext
 from tkinter import scrolledtext
 import nmap
 import concurrent.futures
@@ -7,6 +8,8 @@ import socket
 from scapy.all import ARP, Ether, srp
 import requests
 import threading
+import os
+import re
 
 # Fonction pour envoyer des données à un serveur
 def send_data_to_server(url, data):
@@ -65,7 +68,7 @@ def nmapscan(target, total_targets, scanned_count, results_container, progress_v
 
     scanned_count[0] += 1
     progress_percentage = (scanned_count[0] / total_targets) * 100
-    progress_var.set(f"Scanning progress: {progress_percentage:.2f}%")
+    progress_var.set(progress_percentage)
     root.update_idletasks()  # Mettre à jour l'interface utilisateur avec le pourcentage de progression
 
     send_data_to_server("http://192.168.206.143:5000/api/data", results)
@@ -77,10 +80,11 @@ def start_scan(progress_var, text_widget, root):
     text_widget.configure(state='normal')
     text_widget.delete(1.0, tk.END)
     text_widget.configure(state='disabled')
+    progress_var.set(0)
     start_time = time.time()
     local_ip_range = get_local_ip_range()
     responding_ips = ping_sweep(local_ip_range)
-    responding_ips.remove('192.168.206.143')  # A retirer pour le rendu final
+    responding_ips.remove('192.168.1.200')  # A retirer pour le rendu final
     all_results = []
     scanned_count = [0]
 
@@ -112,25 +116,68 @@ def start_scan(progress_var, text_widget, root):
             text_widget.insert(tk.END, "No open ports found.\n")
     text_widget.configure(state='disabled')
 
+# Ajoutons une fonction pour obtenir le nom de l'hôte et l'adresse IP locale
+def get_host_info():
+    host_name = socket.gethostname()
+    local_ip = socket.gethostbyname(host_name)
+    return host_name, local_ip
+
+# Ajoutons une fonction pour calculer la latence moyenne d'accès WAN
+def get_wan_latency(target='8.8.8.8', count=4):
+    ping_cmd = f"ping -c {count} {target}"
+    response = os.popen(ping_cmd).read()
+    match = re.search(r'(\d+\.\d+)/(\d+\.\d+)/(\d+\.\d+)', response)
+    if match:
+        return match.group(2)  # Retourne la latence moyenne
+    return "N/A"
+
 # Interface graphique
 def create_gui():
     root = tk.Tk()
     root.title("Network Scanner")
     root.geometry("800x600")
+    
+    # Style configuration
+    style = ttk.Style(root)
+    style.theme_use("clam")  # Using a theme for a more modern look
 
-    progress_var = tk.StringVar()
-    progress_label = tk.Label(root, textvariable=progress_var)
-    progress_label.pack(pady=10)
-    progress_var.set("Scanning progress: 0.00%")
+    # Main frame
+    main_frame = ttk.Frame(root, padding="10")
+    main_frame.pack(fill=tk.BOTH, expand=True)
 
-    scan_btn = tk.Button(root, text="Start Scan", command=lambda: threading.Thread(target=start_scan, args=(progress_var, result_text, root)).start())
-    scan_btn.pack(pady=10)
+    # Host info
+    host_name, local_ip = get_host_info()
+    host_info_frame = ttk.Frame(main_frame, padding="10")
+    host_info_frame.pack(fill=tk.X)
+    host_info_label = ttk.Label(host_info_frame, text=f"Host: {host_name}, Local IP: {local_ip}")
+    host_info_label.pack(side=tk.LEFT)
 
-    result_text = tk.Text(root, width=70, height=30, state='disabled')
-    result_text.pack(pady=10)
-    scroll = tk.Scrollbar(root, command=result_text.yview)
-    scroll.pack(side=tk.RIGHT, fill=tk.Y)
-    result_text.config(yscrollcommand=scroll.set)
+    # WAN Latency
+    latency_label = ttk.Label(main_frame, text=f"WAN Latency: {get_wan_latency()} ms")
+    latency_label.pack(fill=tk.X)
+
+    # Scan button with an icon
+    scan_icon = tk.PhotoImage(file="Seahawks_Harvester\scan_icon.png") 
+    scan_icon = scan_icon.subsample(5, 5)
+    scan_btn = ttk.Button(main_frame, text="Start Scan", image=scan_icon, compound=tk.LEFT, command=lambda: threading.Thread(target=start_scan, args=(progress_var, result_text, root)).start())
+    scan_btn.pack(pady="10")
+
+    # Progress bar
+    progress_var = tk.DoubleVar()
+    progress_bar = ttk.Progressbar(main_frame, variable=progress_var, maximum=100, length=250)
+    progress_bar.pack(pady="10")
+
+    # Results area
+    result_text = scrolledtext.ScrolledText(main_frame, width=70, height=30, state='disabled', font=("Courier", 10))
+    result_text.pack(fill=tk.BOTH, expand=True)
+
+    # Status bar
+    status_bar = ttk.Label(root, text="Ready", relief=tk.SUNKEN, anchor=tk.W)
+    status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
+    # Version label at the bottom
+    version_label = ttk.Label(main_frame, text="Application Version: 1.0.0")
+    version_label.pack(side=tk.RIGHT)
 
     root.mainloop()
 
