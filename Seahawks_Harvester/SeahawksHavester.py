@@ -171,10 +171,6 @@ def create_gui():
     result_text = scrolledtext.ScrolledText(main_frame, width=70, height=30, state='disabled', font=("Courier", 10))
     result_text.pack(fill=tk.BOTH, expand=True)
 
-    # Status bar
-    status_bar = ttk.Label(root, text="Ready", relief=tk.SUNKEN, anchor=tk.W)
-    status_bar.pack(side=tk.BOTTOM, fill=tk.X)
-
     # Version label at the bottom
     version_label = ttk.Label(main_frame, text="Application Version: 1.0.0")
     version_label.pack(side=tk.RIGHT)
