@@ -168,9 +168,11 @@ def create_gui():
     scan_btn = ttk.Button(main_frame, text="Start Scan", image=scan_icon, compound=tk.LEFT, command=lambda: threading.Thread(target=start_scan, args=(progress_var, percentage_label, result_text, root)).start())
     scan_btn.pack(pady="10")
 
+    # Configure the style for the green progress bar
+    style.configure('green.Horizontal.TProgressbar', background='green')
+
     # Progress bar
     progress_var = tk.DoubleVar()
-    #progress_bar color green
     progress_bar = ttk.Progressbar(main_frame, variable=progress_var, maximum=100, length=250, style='green.Horizontal.TProgressbar')
     progress_bar.pack(pady="10")
 
