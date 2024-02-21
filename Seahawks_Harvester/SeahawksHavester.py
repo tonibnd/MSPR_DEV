@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import subprocess
+import platform
 
 # Fonction pour envoyer des données à un serveur
 def send_data_to_server(url, data):
@@ -132,11 +133,33 @@ def get_host_info():
 
 # Ajoutons une fonction pour calculer la latence moyenne d'accès WAN
 def get_wan_latency(target='8.8.8.8', count=4):
-    ping_cmd = f"ping -c {count} {target}"
-    response = os.popen(ping_cmd).read()
-    match = re.search(r'(\d+\.\d+)/(\d+\.\d+)/(\d+\.\d+)', response)
-    if match:
-        return match.group(2)  # Retourne la latence moyenne
+    # Déterminer le système d'exploitation
+    oper = platform.system()
+
+    # Configurer la commande ping en fonction du système d'exploitation
+    if oper == "Windows":
+        ping_cmd = f"ping -n {count} {target}"
+    else:
+        ping_cmd = f"ping -c {count} {target}"
+
+    try:
+        # Exécuter la commande ping
+        response = subprocess.check_output(ping_cmd, stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
+
+        # Rechercher la latence moyenne dans la réponse
+        if oper == "Windows":
+            # Le format de sortie sous Windows inclut une moyenne après 'Moyenne = '
+            match = re.search(r'Moyenne = (\d+)ms', response)
+        else:
+            # Le format de sortie sous Unix/Linux inclut une moyenne après '/avg/'
+            match = re.search(r'/(\d+\.\d+)/', response)
+
+        # Retourner la latence moyenne si disponible
+        if match:
+            return match.group(1)
+    except subprocess.CalledProcessError as e:
+        print(f"Command failed: {e.output}")
+
     return "N/A"
 
 def update_application():
