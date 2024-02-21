@@ -167,7 +167,7 @@ def update_application():
         # Définissez l'URL de votre dépôt GitLab
         repo_url = 'https://gitlab.com/msprs/TPRE511'
         # Définissez le chemin local de votre application
-        local_repo_path = '"D:\cours\EPSI\MSPRs\MSPR_DEV"'
+        local_repo_path = "D:\cours\EPSI\MSPRs\MSPR_DEV"
 
         # Vérifier les mises à jour en utilisant git fetch
         subprocess.check_call(['git', 'fetch'], cwd=local_repo_path)
