@@ -10,6 +10,8 @@ import requests
 import threading
 import os
 import re
+import sys
+import subprocess
 
 # Fonction pour envoyer des données à un serveur
 def send_data_to_server(url, data):
@@ -137,11 +139,36 @@ def get_wan_latency(target='8.8.8.8', count=4):
         return match.group(2)  # Retourne la latence moyenne
     return "N/A"
 
+def update_application():
+    try:
+        # Définissez l'URL de votre dépôt GitLab
+        repo_url = 'https://gitlab.com/msprs/TPRE511'
+        # Définissez le chemin local de votre application
+        local_repo_path = '"D:\cours\EPSI\MSPRs\MSPR_DEV"'
+
+        # Vérifier les mises à jour en utilisant git fetch
+        subprocess.check_call(['git', 'fetch'], cwd=local_repo_path)
+
+        # Vérifier si le HEAD actuel est différent du remote/origin
+        local_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=local_repo_path).strip()
+        remote_head = subprocess.check_output(['git', 'rev-parse', 'origin/main'], cwd=local_repo_path).strip()
+
+        if local_head != remote_head:
+            # Appliquer les mises à jour en utilisant git pull
+            subprocess.check_call(['git', 'pull', 'origin', 'main'], cwd=local_repo_path)
+            print("Application updated. Restarting...")
+            # Relancer l'application
+            os.execl(sys.executable, sys.executable, *sys.argv)
+        else:
+            print("No updates available.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while updating the application: {e}")
+
 # Interface graphique
 def create_gui():
     root = tk.Tk()
     root.title("Network Scanner")
-    root.geometry("800x600")
     
     # Style configuration
     style = ttk.Style(root)
@@ -161,6 +188,10 @@ def create_gui():
     # WAN Latency
     latency_label = ttk.Label(main_frame, text=f"WAN Latency: {get_wan_latency()} ms")
     latency_label.pack(fill=tk.X)
+
+    # Ajoutez un bouton pour mettre à jour l'application
+    update_btn = ttk.Button(main_frame, text="Update Application", command=update_application)
+    update_btn.pack(pady="10")
 
     # Scan button with an icon
     scan_icon = tk.PhotoImage(file="Seahawks_Harvester\scan_icon.png") 

@@ -1,13 +1,24 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
+import json
 
 app = Flask(__name__)
-donnees_scannees = []
+
+# Simuler une base de données avec un dictionnaire
+data_store = {"scans": []}
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/api/data', methods=['POST'])
-def reception():
+def receive_data():
     data = request.json
-    donnees_scannees.append(data)
-    return jsonify({"message": "Données reçues avec succès"}), 200
+    data_store["scans"].append(data)
+    return jsonify({"message": "Data received successfully"}), 200
 
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+@app.route('/api/data', methods=['GET'])
+def send_data():
+    return jsonify(data_store)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
