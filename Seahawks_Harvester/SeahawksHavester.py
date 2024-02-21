@@ -38,7 +38,6 @@ import os
 import re
 import platform
 import time
-import platform
 
 def send_data_to_server(url, data):
     """
