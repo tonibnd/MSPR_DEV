@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext
-from tkinter import scrolledtext
 import nmap
 import concurrent.futures
 import time
@@ -250,8 +249,7 @@ def create_gui():
     version_label.pack(side=tk.RIGHT)
 
     root.mainloop()
-    #ajout de commentaire pour tester l'update 
-#test 
 
 if __name__ == "__main__":
     create_gui()
+    update_application()
