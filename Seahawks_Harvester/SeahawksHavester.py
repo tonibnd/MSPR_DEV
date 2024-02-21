@@ -250,6 +250,7 @@ def create_gui():
     version_label.pack(side=tk.RIGHT)
 
     root.mainloop()
+    #ajout de commentaire pour tester l'update 
 
 if __name__ == "__main__":
     create_gui()
