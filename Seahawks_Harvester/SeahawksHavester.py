@@ -39,6 +39,7 @@ import re
 import platform
 import time
 
+
 def send_data_to_server(url, data):
     """
     Envoie des données à un serveur via une requête POST.
@@ -99,6 +100,7 @@ def ping_sweep(ip_range):
     answered, _ = srp(arp_request, timeout=2, verbose=False)
     return [received_packet[1].psrc for received_packet in answered]
 
+
 def nmapscan(target, total_targets, scanned_count, results_container, progress_var, percentage_label, root):
     """
     Exécute un scan Nmap sur une adresse IP cible.
@@ -158,6 +160,7 @@ def nmapscan(target, total_targets, scanned_count, results_container, progress_v
 
     results_container.extend(results)
 
+
 def start_scan(progress_var, percentage_label, text_widget, root):
     """
     Démarre un scan de réseau en utilisant un balayage de ping pour déterminer les hôtes actifs,
@@ -213,6 +216,7 @@ def start_scan(progress_var, percentage_label, text_widget, root):
             text_widget.insert(tk.END, "No open ports found.\n")
     text_widget.configure(state='disabled')
 
+
 def get_host_info():
     """
     Obtient le nom de l'hôte et l'adresse IP locale de la machine.
@@ -224,6 +228,7 @@ def get_host_info():
     host_name = socket.gethostname()
     local_ip = socket.gethostbyname(host_name)
     return host_name, local_ip
+
 
 def get_wan_latency(target='8.8.8.8', count=4):
     """
@@ -261,6 +266,7 @@ def get_wan_latency(target='8.8.8.8', count=4):
         print(f"Command failed: {e.output}")
 
     return "N/A"
+
 
 def update_application():
     """
