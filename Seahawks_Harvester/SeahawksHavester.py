@@ -164,17 +164,23 @@ def get_wan_latency(target='8.8.8.8', count=4):
 
 def update_application():
     try:
-        # Définissez l'URL de votre dépôt GitLab
-        repo_url = 'https://gitlab.com/msprs/TPRE511'
-        # Définissez le chemin local de votre application
-        local_repo_path = "D:\cours\EPSI\MSPRs\MSPR_DEV"
+        # URL de votre dépôt GitLab
+        repo_url = 'https://github.com/tonibnd/MSPR_DEV'
+        # Chemin local de votre application
+        local_repo_path = "D:\\cours\\EPSI\\MSPRs\\MSPR_DEV"
+
+        # Vérifie que le dépôt local est configuré pour utiliser le bon remote URL
+        current_repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], cwd=local_repo_path).decode('utf-8').strip()
+        if current_repo_url != repo_url:
+            print(f"Le dépôt local est configuré pour utiliser {current_repo_url}, qui est différent de {repo_url}")
+            return
 
         # Vérifier les mises à jour en utilisant git fetch
         subprocess.check_call(['git', 'fetch'], cwd=local_repo_path)
 
         # Vérifier si le HEAD actuel est différent du remote/origin
-        local_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=local_repo_path).strip()
-        remote_head = subprocess.check_output(['git', 'rev-parse', 'origin/main'], cwd=local_repo_path).strip()
+        local_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=local_repo_path).decode('utf-8').strip()
+        remote_head = subprocess.check_output(['git', 'rev-parse', 'origin/main'], cwd=local_repo_path).decode('utf-8').strip()
 
         if local_head != remote_head:
             # Appliquer les mises à jour en utilisant git pull
@@ -187,6 +193,7 @@ def update_application():
 
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while updating the application: {e}")
+
 
 # Interface graphique
 def create_gui():
