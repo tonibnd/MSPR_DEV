@@ -177,7 +177,7 @@ def nmapscan(target, total_targets, scanned_count, results_container, progress_v
     # Mettre à jour l'interface utilisateur avec le pourcentage de progression
     root.update_idletasks() 
 
-    send_data_to_server("http://192.168.187.138:5000/api/data", results)
+    #send_data_to_server("http://192.168.187.138:5000/api/data", results)
 
     results_container.extend(results)
 
@@ -202,6 +202,7 @@ def start_scan(progress_var, percentage_label, text_widget, root):
     text_widget.delete(1.0, tk.END)
     text_widget.configure(state='disabled')
     progress_var.set(0)
+    percentage_label.config(text="0%")
     start_time = time.time()
     local_ip_range = get_local_ip_range()
     responding_ips = ping_sweep(local_ip_range)
@@ -235,6 +236,8 @@ def start_scan(progress_var, percentage_label, text_widget, root):
         else:
             text_widget.insert(tk.END, "No open ports found.\n")
     text_widget.configure(state='disabled')
+
+    send_data_to_server("http://192.168.187.138:5000/api/data", all_results)
 
 
 def get_host_info():
