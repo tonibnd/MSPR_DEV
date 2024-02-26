@@ -1,22 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
-    function fetchData() {
-        fetch('/api/data')
-        .then(response => response.json())
-        .then(clients => {
-            const clientListContainer = document.getElementById('client-list');
-            const scanResultsContainer = document.getElementById('scan-results');
-            clientListContainer.innerHTML = ''; // Efface la liste des clients précédente
-            scanResultsContainer.innerHTML = ''; // Efface les détails du scan précédent
+    function fetchClients() {
+        fetch('/api/clients')
+            .then(response => response.json())
+            .then(clientIds => {
+                const clientListContainer = document.getElementById('client-list');
+                clientListContainer.innerHTML = ''; // Efface la liste des clients précédente
 
-            // Ajoute les clients à la liste
-            Object.keys(clients).forEach(clientId => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item list-group-item-action';
-                li.textContent = `Client ${clientId}`;
-                li.onclick = () => displayClientData(clientId, clients[clientId]);
-                clientListContainer.appendChild(li);
-            });
-        });
+                // Ajoute les clients à la liste
+                clientIds.forEach(clientId => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.textContent = `Client ${clientId}`;
+                    li.onclick = () => fetchClientData(clientId);
+                    clientListContainer.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error fetching client list:', error));
+    }
+
+    function fetchClientData(clientId) {
+        fetch(`/api/clients/${clientId}`)
+            .then(response => response.json())
+            .then(clientData => {
+                displayClientData(clientId, clientData);
+            })
+            .catch(error => console.error(`Error fetching data for client ${clientId}:`, error));
     }
 
     function displayClientData(clientId, clientData) {
@@ -33,11 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
         clientData.forEach(data => {
             const item = document.createElement('li');
             item.className = 'list-group-item';
-            item.textContent = JSON.stringify(data);
+            // Formate les données si nécessaire ou les affiche directement
+            item.textContent = JSON.stringify(data, null, 2); // Met en forme les données JSON
             dataList.appendChild(item);
         });
         container.appendChild(dataList);
     }
 
-    fetchData(); // Appelle fetchData au chargement de la page
+    fetchClients(); // Appelle fetchClients au chargement de la page pour lister tous les clients
 });
