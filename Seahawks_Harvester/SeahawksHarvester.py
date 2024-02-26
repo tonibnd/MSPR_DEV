@@ -1,9 +1,21 @@
 import subprocess
-import pkg_resources
 import sys
-#test
-# Liste des dépendances requises par l'application.
-required_packages = ['requests', 'scapy', 'python-nmap']
+
+def install_setuptools():
+    """
+    Vérifie si setuptools est installé. S'il ne l'est pas, l'installe.
+    """
+    try:
+        # Essaye d'importer setuptools
+        import setuptools
+        print("setuptools est déjà installé.")
+    except ImportError:
+        print("Installation de setuptools...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "setuptools"])
+        print("setuptools a été installé avec succès.")
+
+# Liste des dépendances requises par l'application, incluant maintenant setuptools dans la vérification.
+required_packages = ['requests', 'scapy', 'python-nmap', 'setuptools']
 
 def install_packages(packages):
     """
@@ -11,10 +23,12 @@ def install_packages(packages):
 
     Parameters:
     - packages (list): Une liste de noms de paquets à installer.
-
-    Cette fonction utilise le module pip pour installer les paquets spécifiés.
-    Elle vérifie d'abord si chaque paquet est déjà installé, puis installe les paquets manquants.
     """
+    try:
+        import pkg_resources
+    except ImportError:
+        install_setuptools()
+        import pkg_resources  # Réessaye l'importation après l'installation de setuptools
 
     installed_packages = {pkg.key for pkg in pkg_resources.working_set}
     missing_packages = [pkg for pkg in packages if pkg not in installed_packages]
@@ -22,7 +36,7 @@ def install_packages(packages):
         print("Installation des paquets manquants : " + ", ".join(missing_packages))
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', *missing_packages])
 
-# Assurez-vous que toutes les dépendances sont installées au démarrage.
+# Assurez-vous que toutes les dépendances, y compris setuptools, sont installées au démarrage.
 install_packages(required_packages)
 
 # Importations après l'installation des paquets pour éviter des erreurs d'importation.
