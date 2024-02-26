@@ -1,6 +1,12 @@
 import subprocess
 import sys
 
+# Vérifier si un argument de chemin a été fourni
+if len(sys.argv) > 1:
+    local_repo_path = sys.argv[1]  # Le chemin d'installation est le premier argument
+else:
+    local_repo_path = "D:\\cours\\EPSI\\MSPRs\\MSPR_DEV"  # Fallback sur un chemin par défaut
+
 def install_setuptools():
     """
     Vérifie si setuptools est installé. S'il ne l'est pas, l'installe.
@@ -292,8 +298,6 @@ def update_application():
 
     try:
         repo_url = 'https://github.com/tonibnd/MSPR_DEV'
-        
-        local_repo_path = "D:\\cours\\EPSI\\MSPRs\\MSPR_DEV"
 
         current_repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], cwd=local_repo_path).decode('utf-8').strip()
         if current_repo_url != repo_url:
