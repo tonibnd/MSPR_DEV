@@ -298,7 +298,7 @@ def update_application():
     """
 
     try:
-        repo_url = 'https://github.com/tonibnd/MSPR_DEV.git'
+        repo_url = 'https://github.com/tonibnd/MSPR_DEV'
 
         current_repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], cwd=local_repo_path).decode('utf-8').strip()
         if current_repo_url != repo_url:
