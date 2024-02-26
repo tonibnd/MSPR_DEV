@@ -5,7 +5,8 @@ import sys
 if len(sys.argv) > 1:
     local_repo_path = sys.argv[1]  # Le chemin d'installation est le premier argument
 else:
-    local_repo_path = "D:\\cours\\EPSI\\MSPRs\\MSPR_DEV"  # Fallback sur un chemin par défaut
+    print("No local repository path provided.")
+    sys.exit(1)
 
 def install_setuptools():
     """
