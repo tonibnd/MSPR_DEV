@@ -334,6 +334,8 @@ def create_gui():
     un bouton pour mettre à jour l'application, un bouton pour démarrer le scan, une barre de progression, un label de pourcentage,
     un widget de texte pour afficher les résultats du scan, et un label de version.
     """
+    # Obtenir le chemin du dossier contenant le script en cours d'exécution
+    script_dir = os.path.dirname(os.path.abspath(__file__))
 
     root = tk.Tk()
     root.title("Network Scanner")
@@ -361,10 +363,17 @@ def create_gui():
     update_btn = ttk.Button(main_frame, text="Update Application", command=update_application)
     update_btn.pack(pady="10")
 
+    
+    # Construire le chemin absolu vers le fichier d'icône
+    icon_path = os.path.join(script_dir, "scan_icon.png")
+    
+    # Utiliser le chemin absolu pour charger l'icône
+    scan_icon = tk.PhotoImage(file=icon_path)
+
     # Scan button with an icon
-    scan_icon = tk.PhotoImage(file="Seahawks_Harvester\scan_icon.png") 
+    scan_icon = tk.PhotoImage(file=icon_path) 
     scan_icon = scan_icon.subsample(5, 5)
-    scan_btn = ttk.Button(main_frame, text="Start Scan", image=scan_icon, compound=tk.LEFT, command=lambda: threading.Thread(target=start_scan, args=(progress_var, percentage_label, result_text, root)).start())
+    scan_btn = ttk.Button(main_frame, text="Start Scan" , image=scan_icon, compound=tk.LEFT, command=lambda: threading.Thread(target=start_scan, args=(progress_var, percentage_label, result_text, root)).start())
     scan_btn.pack(pady="10")
 
     # Configure the style for the green progress bar
