@@ -300,8 +300,9 @@ def update_application():
     try:
         repo_url = 'https://github.com/tonibnd/MSPR_DEV'
 
-        current_repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], cwd=local_repo_path).decode('utf-8').strip()
-        if current_repo_url != repo_url:
+        current_repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], cwd=local_repo_path).decode('utf-8').strip().rstrip('.git')
+
+        if current_repo_url != repo_url.rstrip('.git'):
             print(f"Le dépôt local est configuré pour utiliser {current_repo_url}, qui est différent de {repo_url}")
             return
 
