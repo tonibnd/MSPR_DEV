@@ -177,7 +177,7 @@ def nmapscan(target, total_targets, scanned_count, results_container, progress_v
     # Mettre à jour l'interface utilisateur avec le pourcentage de progression
     root.update_idletasks() 
 
-    send_data_to_server("http://192.168.206.143:5000/api/data", results)
+    send_data_to_server("http://192.168.187.138:5000/api/data", results)
 
     results_container.extend(results)
 
