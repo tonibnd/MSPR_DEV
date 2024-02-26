@@ -298,7 +298,7 @@ def update_application():
     """
 
     try:
-        repo_url = 'https://github.com/tonibnd/MSPR_DEV'
+        repo_url = 'https://github.com/tonibnd/MSPR_DEV.git'
 
         current_repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], cwd=local_repo_path).decode('utf-8').strip()
         if current_repo_url != repo_url:
@@ -334,7 +334,7 @@ def create_gui():
     un bouton pour mettre à jour l'application, un bouton pour démarrer le scan, une barre de progression, un label de pourcentage,
     un widget de texte pour afficher les résultats du scan, et un label de version.
     """
-    
+
     root = tk.Tk()
     root.title("Network Scanner")
     
