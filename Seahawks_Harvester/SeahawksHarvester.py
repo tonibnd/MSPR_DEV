@@ -205,7 +205,6 @@ def start_scan(progress_var, percentage_label, text_widget, root):
     start_time = time.time()
     local_ip_range = get_local_ip_range()
     responding_ips = ping_sweep(local_ip_range)
-    responding_ips.remove('192.168.1.200')  # A retirer pour le rendu final
     all_results = []
     scanned_count = [0]
 
