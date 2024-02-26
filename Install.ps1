@@ -19,11 +19,71 @@ if (-not (Test-Path "C:\Temp")) {
     New-Item -ItemType Directory -Path "C:\Temp"
 }
 
-# Téléchargement des installateurs
-Invoke-WebRequest -Uri $pythonDownloadUrl -OutFile $pythonInstallerPath -UseBasicParsing
+# Vérification si Python est déjà installé et si le chemin est dans le PATH
+$pythonInstalled = $false
+$pythonPath = "C:\Python313"
+$envPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+if (Test-Path $pythonPath) {
+    $pythonInstalled = $true
+    Write-Host "Python est déjà installé."
+    if ($envPath -notcontains $pythonPath) {
+        Write-Host "Ajout de Python au PATH."
+        $env:Path += ";$pythonPath"
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
+    } else {
+        Write-Host "Python est déjà dans le PATH."
+    }
+}
+
+# Téléchargement de l'installateur Python si Python n'est pas installé
+if (-not $pythonInstalled) {
+    Invoke-WebRequest -Uri $pythonDownloadUrl -OutFile $pythonInstallerPath -UseBasicParsing
+    Write-Host "L'installateur Python a été téléchargé."
+}
+
 Invoke-WebRequest -Uri $npcapDownloadUrl -OutFile $npcapInstallerPath -UseBasicParsing
-Invoke-WebRequest -Uri $nmapDownloadUrl -OutFile $nmapInstallerPath -UseBasicParsing
-Invoke-WebRequest -Uri $gitDownloadUrl -OutFile $gitInstallerPath -UseBasicParsing
+
+# Vérification si Nmap est déjà installé et si le chemin est dans le PATH
+$nmapInstalled = $false
+$nmapPath = "C:\Program Files (x86)\Nmap"
+if (Test-Path $nmapPath) {
+    $nmapInstalled = $true
+    Write-Host "Nmap est déjà installé."
+    if ($envPath -notcontains $nmapPath) {
+        Write-Host "Ajout de Nmap au PATH."
+        $env:Path += ";$nmapPath"
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
+    } else {
+        Write-Host "Nmap est déjà dans le PATH."
+    }
+}
+
+# Téléchargement de l'installateur Nmap si Nmap n'est pas installé
+if (-not $nmapInstalled) {
+    Invoke-WebRequest -Uri $nmapDownloadUrl -OutFile $nmapInstallerPath -UseBasicParsing
+    Write-Host "L'installateur Nmap a été téléchargé."
+}
+
+# Vérification si Git est déjà installé et si le chemin est dans le PATH
+$gitInstalled = $false
+$gitPath = "C:\Program Files\Git"
+if (Test-Path $gitPath) {
+    $gitInstalled = $true
+    Write-Host "Git est déjà installé."
+    if ($envPath -notcontains $gitPath) {
+        Write-Host "Ajout de Git au PATH."
+        $env:Path += ";$gitPath\cmd"
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
+    } else {
+        Write-Host "Git est déjà dans le PATH."
+    }
+}
+
+# Téléchargement de l'installateur Git si Git n'est pas installé
+if (-not $gitInstalled) {
+    Invoke-WebRequest -Uri $gitDownloadUrl -OutFile $gitInstallerPath -UseBasicParsing
+    Write-Host "L'installateur Git a été téléchargé."
+}
 
 Write-Host "Les installateurs ont été téléchargés dans le dossier C:\Temp."
 
