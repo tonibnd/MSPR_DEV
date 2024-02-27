@@ -152,7 +152,7 @@ Write-Host "Nmap version :" (Get-Item "C:\Program Files (x86)\Nmap\nmap.exe").Ve
 Write-Host "Git version :" (Get-Command git).Version.ToString()
 
 # Clonage d'un dépôt GitHub
-$repoUrl = "https://github.com/tonibnd/MSPR_DEV.git" # Remplacez par l'URL de votre dépôt
+$repoUrl = "https://gitlab.com/msprs/TPRE511.git" # Remplacez par l'URL de votre dépôt
 $destinationPath = "C:\Users\$env:USERNAME\Desktop\Seahawks" # Remplacez par le chemin où vous souhaitez cloner le dépôt
 
 # Création du dossier de destination s'il n'existe pas
