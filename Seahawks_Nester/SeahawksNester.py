@@ -21,6 +21,15 @@ CLIENT_DATA_FOLDER = os.path.join(app.root_path, 'client_data')
 def home():
     return render_template('index.html')
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+    
+@app.route('/api/clients/<client_id>')
+def client_details(client_id):
+    return render_template('client_details.html', client_id=client_id)
+    
+    
 @app.route('/api/data', methods=['POST'])
 def receive_data():
     global next_client_id  # Permet de modifier la variable globale
@@ -66,7 +75,7 @@ def list_clients():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/clients/<client_id>', methods=['GET'])
+@app.route('/api/clients/<client_id>/details', methods=['GET'])
 def get_client_data(client_id):
     """Récupère les données pour un client spécifique, uniquement le scan le plus récent."""
     client_folder = os.path.join(CLIENT_DATA_FOLDER, client_id)
@@ -91,3 +100,4 @@ def get_client_data(client_id):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+    #ouvrir le navigateur sur la page http://localhost:5000/ pour voir l'application
