@@ -45,8 +45,6 @@ def receive_data():
 
     # Crée un dossier pour le client_id s'il n'existe pas déjà
     client_folder = os.path.join(CLIENT_DATA_FOLDER, str(client_id))
-    #print (client_folder)
-    console.log(client_folder)
 
     if not os.path.exists(client_folder):
         os.makedirs(client_folder)

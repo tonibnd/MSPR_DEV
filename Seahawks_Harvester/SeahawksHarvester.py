@@ -1,12 +1,13 @@
 import subprocess
 import sys
+import os
 
 # Vérifier si un argument de chemin a été fourni
 if len(sys.argv) > 1:
     local_repo_path = sys.argv[1]  # Le chemin d'installation est le premier argument
 else:
-    print("No local repository path provided.")
-    sys.exit(1)
+    #get local path
+    local_repo_path = os.path.dirname(os.path.realpath(__file__))
 
 def install_setuptools():
     """
@@ -55,7 +56,6 @@ import socket
 from scapy.all import ARP, Ether, srp
 import requests
 import threading
-import os
 import re
 import platform
 import time
@@ -296,7 +296,6 @@ def update_application():
     Cette fonction utilise git fetch pour vérifier les mises à jour, puis git pull pour appliquer les modifications.
     Si des mises à jour sont disponibles, l'application est redémarrée pour les appliquer.
     """
-
     try:
         repo_url = 'https://github.com/tonibnd/MSPR_DEV'
 
