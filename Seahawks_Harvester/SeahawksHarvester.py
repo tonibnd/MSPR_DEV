@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import os
+#tyest
 
 # Vérifier si un argument de chemin a été fourni
 if len(sys.argv) > 1:
@@ -297,7 +298,7 @@ def update_application():
     Si des mises à jour sont disponibles, l'application est redémarrée pour les appliquer.
     """
     try:
-        repo_url = 'https://github.com/tonibnd/MSPR_DEV'
+        repo_url = 'https://gitlab.com/msprs/TPRE511'
 
         current_repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], cwd=local_repo_path).decode('utf-8').strip().rstrip('.git')
 
