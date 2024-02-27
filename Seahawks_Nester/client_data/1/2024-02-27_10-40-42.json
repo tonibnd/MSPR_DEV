@@ -1,0 +1,70 @@
+[
+    {
+        "host": "192.168.1.243",
+        "hostname": "N/A",
+        "state": "up",
+        "open_ports": []
+    },
+    {
+        "host": "192.168.1.200",
+        "hostname": "LAPTOP-I3102H02",
+        "state": "up",
+        "open_ports": [
+            {
+                "port": 135,
+                "service": "msrpc"
+            },
+            {
+                "port": 139,
+                "service": "netbios-ssn"
+            },
+            {
+                "port": 445,
+                "service": "microsoft-ds"
+            },
+            {
+                "port": 902,
+                "service": "vmware-auth"
+            },
+            {
+                "port": 912,
+                "service": "vmware-auth"
+            },
+            {
+                "port": 2869,
+                "service": "http"
+            },
+            {
+                "port": 5357,
+                "service": "http"
+            },
+            {
+                "port": 7070,
+                "service": "realserver"
+            }
+        ]
+    },
+    {
+        "host": "192.168.1.1",
+        "hostname": "GEN8",
+        "state": "up",
+        "open_ports": [
+            {
+                "port": 53,
+                "service": "tcpwrapped"
+            },
+            {
+                "port": 8000,
+                "service": "http-alt"
+            },
+            {
+                "port": 8443,
+                "service": "https-alt"
+            },
+            {
+                "port": 49152,
+                "service": "upnp"
+            }
+        ]
+    }
+]

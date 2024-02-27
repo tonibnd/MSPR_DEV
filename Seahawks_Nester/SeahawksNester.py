@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, send_from_directory,
 import json
 import os
 from datetime import datetime
+from webbrowser import open as window
 
 app = Flask(__name__)
 
@@ -20,10 +21,6 @@ CLIENT_DATA_FOLDER = os.path.join(app.root_path, 'client_data')
 @app.route('/')
 def home():
     return render_template('index.html')
-
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
     
 @app.route('/api/clients/<client_id>')
 def client_details(client_id):
@@ -48,6 +45,9 @@ def receive_data():
 
     # Crée un dossier pour le client_id s'il n'existe pas déjà
     client_folder = os.path.join(CLIENT_DATA_FOLDER, str(client_id))
+    #print (client_folder)
+    console.log(client_folder)
+
     if not os.path.exists(client_folder):
         os.makedirs(client_folder)
 
@@ -99,5 +99,5 @@ def get_client_data(client_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
-    #ouvrir le navigateur sur la page http://localhost:5000/ pour voir l'application
+    window('http://localhost:5000/')
+    app.run(debug=False, host='0.0.0.0', port=5000)
